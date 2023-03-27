@@ -1,2 +1,2 @@
-# Test-The-Internet-Herokuapp
-UI test of http://the-internet.herokuapp.com/
+# the-internet-herokuapp
+UI tests for http://the-internet.herokuapp.com/
