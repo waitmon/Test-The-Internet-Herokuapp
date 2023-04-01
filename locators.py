@@ -36,3 +36,52 @@ class PageLocators:
 
     ENABLE_DISABLE = (By.CSS_SELECTOR, 'button[onclick="swapInput()"]')
     INPUT_FIELD = (By.CSS_SELECTOR, 'input[type="text"]')
+
+    HIDDEN_TEXT = (By.CSS_SELECTOR, 'div[id="finish"]')
+    START_BUTTON = (By.CSS_SELECTOR, '#start > button')
+
+    MODAL_TITLE = (By.CSS_SELECTOR, 'div[class="modal-title"]')
+    MODAL_CONTENT = (By.CSS_SELECTOR, 'div[class="modal-body"]')
+    MODAL_CLOSE = (By.CSS_SELECTOR, '#modal > div.modal > div.modal-footer > p')
+    MODAL_WINDOW = (By.CSS_SELECTOR, 'div[class="modal"]')
+
+    CHOSE_FILE_BUTTON = (By.CSS_SELECTOR, '#file-upload')
+    UPLOAD_BUTTON = (By.CSS_SELECTOR, '#file-submit')
+    UPLOADED_MSG = (By.CSS_SELECTOR, '#content > div > h3')
+
+    FLOATING_MENU = (By.CSS_SELECTOR, 'div[id="menu"]')
+
+    USERNAME_FIELD = (By.CSS_SELECTOR, '#username')
+    PASSWORD_FIELD = (By.CSS_SELECTOR, '#password')
+    LOGIN_BUTTON = (By.CSS_SELECTOR, 'button[type="submit"]')
+    LOGIN_MSG = (By.CSS_SELECTOR, '#flash')
+
+    FRAME_TOP = (By.CSS_SELECTOR, 'frame[name="frame-top"]')
+    LEFT_FRAME = (By.CSS_SELECTOR, 'frame[name="frame-left"]')
+    FRAME_TEXT = (By.CSS_SELECTOR, 'body')
+    MIDDLE_FRAME = (By.NAME, 'frame-middle')
+    RIGHT_FRAME = (By.NAME, 'frame-right')
+    BOTTOM_FRAME = (By.NAME, 'frame-bottom')
+
+    IFRAME = (By.CSS_SELECTOR, 'iframe[id="mce_0_ifr"]')
+    IFRAME_INPUT_TEXT = (By.CSS_SELECTOR, '#tinymce>p')
+
+    SLIDER = (By.CSS_SELECTOR, 'input[type="range"]')
+    SLIDER_FIELD = (By.CSS_SELECTOR, 'span[id="range"]')
+
+    USER_CAPTION = (By.CLASS_NAME, 'figcaption')
+    USER = (By.CLASS_NAME, 'figure')
+
+    NUMBER_INPUT_FIELD = (By.CSS_SELECTOR, 'input[type="number"]')
+
+    JQ_MENU = (By.CSS_SELECTOR, 'ul[id="menu"]')
+    JQ_ENABLED = (By.CSS_SELECTOR, 'a[id="ui-id-2"]')
+    JQ_DOWNLOADS = (By.CSS_SELECTOR, 'a[id="ui-id-4"]')
+    BACK_TO_JQUERY_UI = (By.CSS_SELECTOR, 'a[id="ui-id-5"]')
+    JQ_PDF = (By.CSS_SELECTOR, 'a[id="ui-id-6"]')
+    JQ_CSV = (By.CSS_SELECTOR, 'a[id="ui-id-7"]')
+    JQ_EXCEL = (By.CSS_SELECTOR, 'a[id="ui-id-8"]')
+
+
+
+

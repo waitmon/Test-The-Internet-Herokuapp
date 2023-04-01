@@ -1,3 +1,6 @@
+import os
+import time
+
 import requests
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
@@ -85,3 +88,25 @@ class BasePage:
             pass
         else:
             quit(f" Expected code {expected_code}, got code {current_code}")
+
+    def get_all_attributes(self, element):
+        self.driver.execute_script(
+            'var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments['
+            '0].attributes[index].name] = arguments[0].attributes[index].value }; return items;',
+            element)
+
+    def action_mouse_out_of_the_viewport(self):
+        action = ActionChains(self.driver)
+        action.move_by_offset(550, 550)
+        action.perform()
+
+    def latest_download_file(self):
+        path = r'/Users/anton/Downloads'
+        os.chdir(path)
+        files = sorted(os.listdir(os.getcwd()), key=os.path.getmtime)
+        newest = files[-1]
+        return newest
+
+
+
+

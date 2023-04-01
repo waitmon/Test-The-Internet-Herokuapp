@@ -1,6 +1,8 @@
 import random
 import time
 from selenium.common import UnexpectedAlertPresentException
+import pyautogui
+from selenium.webdriver import Keys
 
 from locators import PageLocators
 from pages.base_page import BasePage
@@ -156,6 +158,265 @@ class DynamicControls(BasePage):
         input_field = self.element_is_clickable(self.locators.INPUT_FIELD)
         input_field.click()
         input_field.send_keys('test')
-        # self.element_is_present(self.locators.ENABLE_DISABLE).click()
-        # input_status = input_field.get_attribute('disabled')
-        # print(input_status)
+        assert input_field.is_enabled()
+
+    def check_disable_input(self):
+        input_field = self.element_is_present(self.locators.INPUT_FIELD)
+        assert input_field.get_attribute('disabled')
+
+
+class DynamicLoading(BasePage):
+    locators = PageLocators()
+
+    def check_element_is_rendered_after_click(self):
+        self.element_is_present(self.locators.START_BUTTON).click()
+        hidden_element = self.element_is_visible(self.locators.HIDDEN_TEXT)
+        assert hidden_element.is_displayed()
+
+
+class EntryAd(BasePage):
+    locators = PageLocators()
+
+    def check_entry_ad_content(self):
+        modal_title = self.element_is_visible(self.locators.MODAL_TITLE).text
+        modal_content = self.element_is_visible(self.locators.MODAL_CONTENT).text
+        return modal_title, len(modal_content)
+
+
+class ExitIntent(BasePage):
+    locators = PageLocators()
+
+    def check_modal_appear(self):
+        time.sleep(5)
+        self.action_mouse_out_of_the_viewport()
+        pyautogui.moveTo(1000, 200)
+        modal_window = self.element_is_present(self.locators.MODAL_WINDOW)
+        assert modal_window.is_displayed(), 'Modal window does not appear'
+
+
+class FileUploader(BasePage):
+    locators = PageLocators()
+
+    def check_file_uploading(self):
+        self.element_is_present(self.locators.CHOSE_FILE_BUTTON).send_keys('/Users/anton/PycharmProjects/Test-The'
+                                                                           '-Internet-Herokuapp/test_file.txt')
+        self.element_is_present(self.locators.UPLOAD_BUTTON).click()
+        upload_msg = self.element_is_present(self.locators.UPLOADED_MSG).text
+        return upload_msg
+
+
+class FloatingMenu(BasePage):
+    locators = PageLocators()
+
+    def check_floating_menu_presence(self):
+        floating_menu = self.element_is_present(self.locators.FLOATING_MENU)
+        random_destination = str(random.randint(0, 999))
+        self.driver.execute_script("window.scrollBy(0," + random_destination + ");")
+        assert floating_menu.is_displayed(), 'Floating menu does not appear'
+
+
+class FormAuthentication(BasePage):
+    locators = PageLocators()
+
+    def check_success_auth(self):
+        username = 'tomsmith'
+        password = 'SuperSecretPassword!'
+        self.element_is_present(self.locators.USERNAME_FIELD).send_keys(username)
+        self.element_is_present(self.locators.PASSWORD_FIELD).send_keys(password)
+        self.element_is_present(self.locators.LOGIN_BUTTON).click()
+        login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
+        return login_msg
+
+    def check_invalid_username_auth(self):
+        username = 'johnsmith'
+        password = 'SuperSecretPassword!'
+        self.element_is_present(self.locators.USERNAME_FIELD).send_keys(username)
+        self.element_is_present(self.locators.PASSWORD_FIELD).send_keys(password)
+        self.element_is_present(self.locators.LOGIN_BUTTON).click()
+        login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
+        return login_msg
+
+    def check_invalid_password_auth(self):
+        username = 'tomsmith'
+        password = '1234qw!'
+        self.element_is_present(self.locators.USERNAME_FIELD).send_keys(username)
+        self.element_is_present(self.locators.PASSWORD_FIELD).send_keys(password)
+        self.element_is_present(self.locators.LOGIN_BUTTON).click()
+        login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
+        return login_msg
+
+    def check_empty_login_auth(self):
+        self.element_is_present(self.locators.LOGIN_BUTTON).click()
+        login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
+        return login_msg
+
+
+class Frames(BasePage):
+    locators = PageLocators()
+
+    def check_nested_frames_content(self):
+        frame_top = self.element_is_present(self.locators.FRAME_TOP)
+        self.driver.switch_to.frame(frame_top)
+        left_frame = self.element_is_present(self.locators.LEFT_FRAME)
+        self.driver.switch_to.frame(left_frame)
+        left_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        self.driver.switch_to.default_content()
+        self.driver.switch_to.frame(frame_top)
+        middle_frame = self.element_is_present(self.locators.MIDDLE_FRAME)
+        self.driver.switch_to.frame(middle_frame)
+        middle_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        self.driver.switch_to.default_content()
+        self.driver.switch_to.frame(frame_top)
+        right_frame = self.element_is_present(self.locators.RIGHT_FRAME)
+        self.driver.switch_to.frame(right_frame)
+        right_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        self.driver.switch_to.default_content()
+        frame_bottom = self.element_is_present(self.locators.BOTTOM_FRAME)
+        self.driver.switch_to.frame(frame_bottom)
+        bottom_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        return left_text, middle_text, right_text, bottom_text
+
+    def check_iframe_interaction(self):
+        iframe = self.element_is_present(self.locators.IFRAME)
+        self.driver.switch_to.frame(iframe)
+        iframe_text_field = self.element_is_present(self.locators.IFRAME_INPUT_TEXT)
+        iframe_text_field.click()
+        iframe_text_field.send_keys('Mine too')
+        assert iframe_text_field.is_displayed(), 'Driver can not switch to iframe'
+
+
+class HorizontalSlider(BasePage):
+    locators = PageLocators()
+
+    def check_slider_moving_by_mouse(self):
+        range_value_before = self.element_is_visible(self.locators.SLIDER_FIELD).text
+        slider = self.element_is_present(self.locators.SLIDER)
+        self.action_drag_and_drop_by_offset(slider, random.randint(1, 100), 0)
+        range_value_after = self.element_is_visible(self.locators.SLIDER_FIELD).text
+        return range_value_before, range_value_after
+
+    def check_slider_moving_by_arrow_keys(self):
+        range_value_before = self.element_is_visible(self.locators.SLIDER_FIELD).text
+        slider = self.element_is_present(self.locators.SLIDER)
+        slider.click()
+        slider.send_keys(Keys.RIGHT)
+        slider.send_keys(Keys.LEFT)
+        range_value_after = self.element_is_visible(self.locators.SLIDER_FIELD).text
+        return range_value_before, range_value_after
+
+
+class Hovers(BasePage):
+    locators = PageLocators()
+
+    def check_hovers(self):
+        user = self.element_is_present(self.locators.USER)
+        self.action_move_to_element(user)
+        user_caption = self.element_is_present(self.locators.USER_CAPTION)
+        assert user_caption.is_displayed(), 'hover missing'
+
+
+class InfiniteScroll(BasePage):
+    def check_infinite_scroll(self):
+        scroll_pause_time = 0.5
+        current_scrolling_height = self.driver.execute_script("return document.body.scrollHeight")
+        while True:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(scroll_pause_time)
+            new_scrolling_height = self.driver.execute_script("return document.body.scrollHeight")
+            if new_scrolling_height != current_scrolling_height:
+                break
+            assert current_scrolling_height != new_scrolling_height, 'Infinite scrolling does not reproduce'
+
+
+class Inputs(BasePage):
+    locators = PageLocators()
+
+    def check_input_numbers(self):
+        input_field = self.element_is_present(self.locators.NUMBER_INPUT_FIELD)
+        input_field.click()
+        input_field.send_keys(random.randint(-1000, 1000))
+        input_opt = input_field.get_attribute('value')
+        assert input_opt.isdigit(), 'Impossible to input digital characters'
+
+    def check_non_digit_char(self):
+        input_field = self.element_is_present(self.locators.NUMBER_INPUT_FIELD)
+        input_field.click()
+        input_field.send_keys('ui')
+        input_opt = input_field.get_attribute('value')
+        assert '' in input_opt, 'Non digital characters are possible for input'
+
+
+class JQueryUI(BasePage):
+    locators = PageLocators()
+
+    def check_enabled_menu(self):
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        assert enabled_menu.is_enabled() and enabled_menu.is_displayed(), 'Enabled menu is not clickable'
+
+    def check_back_to_jquery_menu(self):
+        current_url = self.driver.current_url
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        back_to_jquery = self.element_is_present(self.locators.BACK_TO_JQUERY_UI)
+        self.js_script_click(back_to_jquery)
+        new_url = self.driver.current_url
+        assert current_url != new_url, 'Button link does not refer to http://the-internet.herokuapp.com/jqueryui'
+
+    def check_downloads_menu(self):
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
+        self.js_script_click(downloads_menu)
+        assert downloads_menu.is_enabled() and downloads_menu.is_displayed(), 'Downloads menu is not clickable'
+
+    def check_downloads_pdf(self):
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
+        self.js_script_click(downloads_menu)
+        pdf_menu = self.element_is_present(self.locators.JQ_PDF)
+        self.js_script_click(pdf_menu)
+        fileends = "crdownload"
+        while "crdownload" == fileends:
+            time.sleep(1)
+            newest_file = self.latest_download_file()
+            if "crdownload" in newest_file:
+                fileends = "crdownload"
+            else:
+                fileends = "none"
+        assert '.pdf' in self.latest_download_file(), 'PDF file does not download'
+
+    def check_downloads_csv(self):
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
+        self.js_script_click(downloads_menu)
+        csv_menu = self.element_is_present(self.locators.JQ_CSV)
+        self.js_script_click(csv_menu)
+        fileends = "crdownload"
+        while "crdownload" == fileends:
+            time.sleep(1)
+            newest_file = self.latest_download_file()
+            if "crdownload" in newest_file:
+                fileends = "crdownload"
+            else:
+                fileends = "none"
+        assert '.csv' in self.latest_download_file(), 'CSV file does not download'
+
+    def check_downloads_xls(self):
+        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        self.js_script_click(enabled_menu)
+        downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
+        self.js_script_click(downloads_menu)
+        xls_menu = self.element_is_present(self.locators.JQ_EXCEL)
+        self.js_script_click(xls_menu)
+        fileends = "crdownload"
+        while "crdownload" == fileends:
+            time.sleep(1)
+            newest_file = self.latest_download_file()
+            if "crdownload" in newest_file:
+                fileends = "crdownload"
+            else:
+                fileends = "none"
+        assert '.xls' in self.latest_download_file(), 'XLS file does not download'
