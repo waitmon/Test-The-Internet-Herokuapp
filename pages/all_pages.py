@@ -1,9 +1,10 @@
 import random
 import string
 import time
+
+import pyautogui
 import requests
 from selenium.common import UnexpectedAlertPresentException
-import pyautogui
 from selenium.webdriver import Keys
 
 from locators import PageLocators
