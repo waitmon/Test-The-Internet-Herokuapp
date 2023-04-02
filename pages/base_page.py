@@ -1,8 +1,5 @@
 import os
-import time
-
-import requests
-from selenium.webdriver import ActionChains
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -81,20 +78,6 @@ class BasePage:
     def extract_text_from_element(self, element):
         self.driver.execute_script("return arguments[0].textContent", element)
 
-    def check_response_code(self, url, expected_code):
-        url_to_open = requests.get(url)
-        current_code = url_to_open.status_code
-        if current_code == expected_code:
-            pass
-        else:
-            quit(f" Expected code {expected_code}, got code {current_code}")
-
-    def get_all_attributes(self, element):
-        self.driver.execute_script(
-            'var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments['
-            '0].attributes[index].name] = arguments[0].attributes[index].value }; return items;',
-            element)
-
     def action_mouse_out_of_the_viewport(self):
         action = ActionChains(self.driver)
         action.move_by_offset(550, 550)
@@ -107,6 +90,7 @@ class BasePage:
         newest = files[-1]
         return newest
 
-
-
-
+    def action_key_down(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.TAB)
+        action.perform()

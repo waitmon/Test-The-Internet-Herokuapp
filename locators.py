@@ -81,7 +81,23 @@ class PageLocators:
     JQ_PDF = (By.CSS_SELECTOR, 'a[id="ui-id-6"]')
     JQ_CSV = (By.CSS_SELECTOR, 'a[id="ui-id-7"]')
     JQ_EXCEL = (By.CSS_SELECTOR, 'a[id="ui-id-8"]')
+    JQ_DISABLED = (By.CSS_SELECTOR, 'a[id="ui-id-1"]')
 
+    JS_ALERT = (By.CSS_SELECTOR, 'button[onclick="jsAlert()"]')
+    JS_CONFIRM = (By.CSS_SELECTOR, 'button[onclick="jsConfirm()"]')
+    JS_PROMPT = (By.CSS_SELECTOR, 'button[onclick="jsPrompt()"]')
+    ALERT_RESULT = (By.CSS_SELECTOR, '#result')
 
+    KEY_RESULT = (By.CSS_SELECTOR, '#result')
 
+    OPEN_NEW_WINDOW = (By.CSS_SELECTOR, 'a[href="/windows/new"]')
 
+    NOTIFICATION_MSG = (By.CSS_SELECTOR, '#flash')
+    NEW_NOTIFY_MSG = (By.CSS_SELECTOR, 'a[href="/notification_message"]')
+
+    PAGE_200 = (By.CSS_SELECTOR, 'a[href="status_codes/200"]')
+    PAGE_301 = (By.CSS_SELECTOR, 'a[href="status_codes/301"]')
+    PAGE_404 = (By.CSS_SELECTOR, 'a[href="status_codes/404"]')
+    PAGE_500 = (By.CSS_SELECTOR, 'a[href="status_codes/500"]')
+
+    TYPOS_TEXT = (By.CSS_SELECTOR, 'div[class="example"]')

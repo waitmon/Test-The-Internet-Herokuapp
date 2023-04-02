@@ -1,6 +1,7 @@
 from pages.all_pages import AddRemoveElements, BasicAuth, BrokenImages, Checkboxes, ContextMenu, DisappearingElements, \
     DragAndDrop, DropdownList, DynamicContent, DynamicControls, DynamicLoading, EntryAd, ExitIntent, FileUploader, \
-    FloatingMenu, FormAuthentication, Frames, HorizontalSlider, Hovers, InfiniteScroll, Inputs, JQueryUI
+    FloatingMenu, FormAuthentication, Frames, HorizontalSlider, Hovers, InfiniteScroll, Inputs, JQueryUI, JSAlerts, \
+    KeyPresses, MultipleWindows, NotificationMessage, StatusCodes, Typos
 
 
 class TestAddRemoveElements:
@@ -22,7 +23,7 @@ class TestBasicAuth:
         page = BasicAuth(driver, 'https://admin:admin@the-internet.herokuapp.com/basic_auth/')
         page.open()
         auth_msg = page.check_success_authorization()
-        assert auth_msg == 'Congratulations! You must have the proper credentials.'
+        assert auth_msg == 'Congratulations! You must have the proper credentials.', 'Incorrect login'
 
 
 class TestBrokenImages:
@@ -49,7 +50,7 @@ class TestContextMenu:
         page = ContextMenu(driver, 'http://the-internet.herokuapp.com/context_menu')
         page.open()
         alert_msg = page.check_right_click()
-        assert alert_msg == 'You selected a context menu'
+        assert alert_msg == 'You selected a context menu', 'Context menu did not display'
 
 
 class TestDisappearingElements:
@@ -131,7 +132,7 @@ class TestEntryAd:
         page = EntryAd(driver, 'http://the-internet.herokuapp.com/entry_ad')
         page.open()
         modal_msg, modal_content = page.check_entry_ad_content()
-        assert modal_msg == 'THIS IS A MODAL WINDOW' and modal_content > 0
+        assert modal_msg == 'THIS IS A MODAL WINDOW' and modal_content > 0, 'Modal window did not appear'
 
 
 class TestExitIntent:
@@ -148,7 +149,7 @@ class TestFileUploader:
         page = FileUploader(driver, 'http://the-internet.herokuapp.com/upload')
         page.open()
         upload_message = page.check_file_uploading()
-        assert upload_message == 'File Uploaded!'
+        assert upload_message == 'File Uploaded!', 'File was not uploaded'
 
 
 class TestFloatingMenu:
@@ -165,25 +166,25 @@ class TestFormAuthentication:
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_success_auth()
-        assert 'You logged into a secure area!' in login_result, 'Invalid Login warning appears'
+        assert 'You logged into a secure area!' in login_result, 'Invalid Login warning appeared'
 
     def test_invalid_username_auth(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_invalid_username_auth()
-        assert 'Your username is invalid!' in login_result, 'Successful login message appears'
+        assert 'Your username is invalid!' in login_result, 'Successful login message appeared'
 
     def test_invalid_password_auth(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_invalid_password_auth()
-        assert 'Your password is invalid!' in login_result, 'Successful login message appears'
+        assert 'Your password is invalid!' in login_result, 'Successful login message appeared'
 
     def test_empty_login(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_empty_login_auth()
-        assert 'Your username is invalid!' in login_result, 'Successful login message appears'
+        assert 'Your username is invalid!' in login_result, 'Successful login message appeared'
 
 
 class TestFrames:
@@ -209,13 +210,13 @@ class TestHorizontalSlider:
         page = HorizontalSlider(driver, 'http://the-internet.herokuapp.com/horizontal_slider')
         page.open()
         before, after = page.check_slider_moving_by_mouse()
-        assert before != after, 'the slider range value does not change'
+        assert before != after, 'The slider range value did not change'
 
     def test_slider_moving_arrows(self, driver):
         page = HorizontalSlider(driver, 'http://the-internet.herokuapp.com/horizontal_slider')
         page.open()
         before, after = page.check_slider_moving_by_arrow_keys()
-        assert before != after, 'the slider range value does not change'
+        assert before != after, 'The slider range value did not change'
 
 
 class TestHovers:
@@ -278,3 +279,96 @@ class TestJQueryUI:
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_downloads_xls()
+
+    def test_disabled_menu(self, driver):
+        page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
+        page.open()
+        page.check_disabled_menu()
+
+
+class TestJSAlerts:
+
+    def test_js_alert_click(self, driver):
+        page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
+        page.open()
+        alert_msg = page.check_js_alert_click()
+        assert alert_msg == 'You successfully clicked an alert', 'Alert window did not appear'
+
+    def test_js_confirm_accept_click(self, driver):
+        page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
+        page.open()
+        alert_msg = page.check_js_confirm_accept()
+        assert alert_msg == 'You clicked: Ok', 'Alert window did not appear'
+
+    def test_js_confirm_dismiss_click(self, driver):
+        page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
+        page.open()
+        alert_msg = page.check_js_confirm_dismiss()
+        assert alert_msg == 'You clicked: Cancel', 'Alert window did not appear'
+
+    def test_js_prompt_accept_click(self, driver):
+        page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
+        page.open()
+        text, prompt_text = page.check_js_prompt_click_accept()
+        assert text in prompt_text, 'Alert window did not appear'
+
+    def test_js_prompt_accept_dismiss(self, driver):
+        page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
+        page.open()
+        text_res = page.check_js_prompt_click_dismiss()
+        assert text_res == "You entered: null", 'Alert window did not appear'
+
+
+class TestKeyPresses:
+
+    def test_key_presses(self, driver):
+        page = KeyPresses(driver, 'http://the-internet.herokuapp.com/key_presses')
+        page.open()
+        page.check_key_presses()
+
+
+class TestMultipleWindows:
+
+    def test_multiple_windows(self, driver):
+        page = MultipleWindows(driver, 'http://the-internet.herokuapp.com/windows')
+        page.open()
+        page.check_multiple_windows()
+
+
+class TestNotificationMessage:
+
+    def test_notification_message(self, driver):
+        page = NotificationMessage(driver, 'http://the-internet.herokuapp.com/notification_message_rendered')
+        page.open()
+        page.check_notification_message()
+
+
+class TestStatusCodes:
+
+    def test_200_status_code(self, driver):
+        page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
+        page.open()
+        page.check_200_status_code()
+
+    def test_301_status_code(self, driver):
+        page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
+        page.open()
+        page.check_301_status_code()
+
+    def test_404_status_code(self, driver):
+        page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
+        page.open()
+        page.check_404_status_code()
+
+    def test_500_status_code(self, driver):
+        page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
+        page.open()
+        page.check_500_status_code()
+
+
+class TestTypos:
+
+    def test_typos_finding(self, driver):
+        page = Typos(driver, 'https://the-internet.herokuapp.com/typos')
+        page.open()
+        page.check_typos_finding()

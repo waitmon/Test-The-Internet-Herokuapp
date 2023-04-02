@@ -1,5 +1,7 @@
 import random
+import string
 import time
+import requests
 from selenium.common import UnexpectedAlertPresentException
 import pyautogui
 from selenium.webdriver import Keys
@@ -15,13 +17,13 @@ class AddRemoveElements(BasePage):
         self.element_is_present(self.locators.ADD_ELEMENT).click()
         added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
         added_element_option = added_element.get_attribute('class')
-        assert 'added-manually' in added_element_option
+        assert 'added-manually' in added_element_option, 'Element was not added'
 
     def check_remove_element(self):
         self.element_is_present(self.locators.ADD_ELEMENT).click()
         added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
         added_element.click()
-        assert self.element_is_not_visible(added_element)
+        assert self.element_is_not_visible(added_element), 'Element was not deleted'
 
 
 class BasicAuth(BasePage):
@@ -41,12 +43,12 @@ class BrokenImages(BasePage):
         for image in images_list:
             image_status = image.get_attribute('naturalWidth')
             images_status.append(image_status)
-            assert '0' in images_status
+            assert '0' in images_status, 'Broken images displayed'
 
     def check_correct_image(self):
         image = self.element_is_present(self.locators.VALID_IMAGE)
         image_status = image.get_attribute('naturalWidth')
-        assert image_status != 0
+        assert image_status != 0, 'Correct image did not display'
 
 
 class Checkboxes(BasePage):
@@ -60,7 +62,7 @@ class Checkboxes(BasePage):
         for checkbox in checkboxes_selected:
             checkbox_checked = checkbox.get_attribute('value')
             selected_checkboxes.append(checkbox_checked)
-        assert 'on' in selected_checkboxes
+        assert 'on' in selected_checkboxes, 'Checkboxes were not selected'
 
 
 class ContextMenu(BasePage):
@@ -83,7 +85,8 @@ class DisappearingElements(BasePage):
         elements_qty_before_refreshing = self.elements_are_present(self.locators.ELEMENTS)
         self.driver.refresh()
         elements_qty_after_refreshing = self.elements_are_present(self.locators.ELEMENTS)
-        assert elements_qty_before_refreshing != elements_qty_after_refreshing
+        assert elements_qty_before_refreshing != elements_qty_after_refreshing, 'Quantity of elements did not changed ' \
+                                                                                'after page reloading'
 
 
 class DragAndDrop(BasePage):
@@ -99,7 +102,7 @@ class DragAndDrop(BasePage):
     def check_drag_box_moving(self):
         drag_box = self.element_is_visible(self.locators.COLUMN_A)
         before_position, after_position = self.get_before_and_after_position(drag_box)
-        return before_position, after_position
+        return before_position, after_position, 'Drag box did not move'
 
 
 class DropdownList(BasePage):
@@ -108,12 +111,12 @@ class DropdownList(BasePage):
     def check_first_option_selected(self):
         option = self.element_is_present(self.locators.OPTION_1)
         option.click()
-        assert option.is_selected()
+        assert option.is_selected(), 'First option was not selected'
 
     def check_second_option_selected(self):
         option = self.element_is_present(self.locators.OPTION_2)
         option.click()
-        assert option.is_selected()
+        assert option.is_selected(), 'Second option was not selected'
 
 
 class DynamicContent(BasePage):
@@ -123,7 +126,7 @@ class DynamicContent(BasePage):
         content_before_refreshing = self.elements_are_present(self.locators.PAGE_CONTENT)
         self.driver.refresh()
         content_after_refreshing = self.elements_are_present(self.locators.PAGE_CONTENT)
-        assert content_before_refreshing != content_after_refreshing
+        assert content_before_refreshing != content_after_refreshing, 'Content did not change after page reloading'
 
     def check_static_content(self):
         self.element_is_present(self.locators.STATIC_BUTTON).click()
@@ -132,7 +135,7 @@ class DynamicContent(BasePage):
         self.driver.refresh()
         content_after_refreshing = [self.element_is_present(self.locators.COLUMN_1),
                                     self.element_is_present(self.locators.COLUMN_2)]
-        assert content_before_refreshing != content_after_refreshing
+        assert content_before_refreshing != content_after_refreshing, 'Some of the content did not turn to static'
 
 
 class DynamicControls(BasePage):
@@ -142,7 +145,7 @@ class DynamicControls(BasePage):
         checkbox = self.element_is_present(self.locators.CHECKBOX_LIST)
         self.element_is_present(self.locators.ACTION_BUTTON).click()
         button_msg = self.element_is_present(self.locators.BUTTON_MESSAGE).text
-        assert self.element_is_not_visible(checkbox) and button_msg == "It's gone!"
+        assert self.element_is_not_visible(checkbox) and button_msg == "It's gone!", 'Checkbox was not remove'
 
     def check_checkbox_appear(self):
         checkbox = self.element_is_present(self.locators.CHECKBOX_LIST)
@@ -151,18 +154,18 @@ class DynamicControls(BasePage):
         self.element_is_present(self.locators.ACTION_BUTTON).click()
         checkbox_appear = self.element_is_present(self.locators.CHECKBOX_APPEAR)
         button_msg = self.element_is_visible(self.locators.BUTTON_MESSAGE).text
-        assert checkbox_appear.is_displayed() and button_msg == "It's back!"
+        assert checkbox_appear.is_displayed() and button_msg == "It's back!", 'Checkbox did not display'
 
     def check_enable_input(self):
         self.element_is_present(self.locators.ENABLE_DISABLE).click()
         input_field = self.element_is_clickable(self.locators.INPUT_FIELD)
         input_field.click()
         input_field.send_keys('test')
-        assert input_field.is_enabled()
+        assert input_field.is_enabled(), 'Input field is disabled'
 
     def check_disable_input(self):
         input_field = self.element_is_present(self.locators.INPUT_FIELD)
-        assert input_field.get_attribute('disabled')
+        assert input_field.get_attribute('disabled'), 'Input field is enabled'
 
 
 class DynamicLoading(BasePage):
@@ -171,7 +174,7 @@ class DynamicLoading(BasePage):
     def check_element_is_rendered_after_click(self):
         self.element_is_present(self.locators.START_BUTTON).click()
         hidden_element = self.element_is_visible(self.locators.HIDDEN_TEXT)
-        assert hidden_element.is_displayed()
+        assert hidden_element.is_displayed(), 'Hidden element did not display'
 
 
 class EntryAd(BasePage):
@@ -191,7 +194,7 @@ class ExitIntent(BasePage):
         self.action_mouse_out_of_the_viewport()
         pyautogui.moveTo(1000, 200)
         modal_window = self.element_is_present(self.locators.MODAL_WINDOW)
-        assert modal_window.is_displayed(), 'Modal window does not appear'
+        assert modal_window.is_displayed(), 'Modal window did not appear'
 
 
 class FileUploader(BasePage):
@@ -212,7 +215,7 @@ class FloatingMenu(BasePage):
         floating_menu = self.element_is_present(self.locators.FLOATING_MENU)
         random_destination = str(random.randint(0, 999))
         self.driver.execute_script("window.scrollBy(0," + random_destination + ");")
-        assert floating_menu.is_displayed(), 'Floating menu does not appear'
+        assert floating_menu.is_displayed(), 'Floating menu did not appear'
 
 
 class FormAuthentication(BasePage):
@@ -282,7 +285,7 @@ class Frames(BasePage):
         iframe_text_field = self.element_is_present(self.locators.IFRAME_INPUT_TEXT)
         iframe_text_field.click()
         iframe_text_field.send_keys('Mine too')
-        assert iframe_text_field.is_displayed(), 'Driver can not switch to iframe'
+        assert iframe_text_field.is_displayed(), 'Driver could not switch to iframe'
 
 
 class HorizontalSlider(BasePage):
@@ -312,7 +315,7 @@ class Hovers(BasePage):
         user = self.element_is_present(self.locators.USER)
         self.action_move_to_element(user)
         user_caption = self.element_is_present(self.locators.USER_CAPTION)
-        assert user_caption.is_displayed(), 'hover missing'
+        assert user_caption.is_displayed(), 'Hover text did not appear'
 
 
 class InfiniteScroll(BasePage):
@@ -325,7 +328,7 @@ class InfiniteScroll(BasePage):
             new_scrolling_height = self.driver.execute_script("return document.body.scrollHeight")
             if new_scrolling_height != current_scrolling_height:
                 break
-            assert current_scrolling_height != new_scrolling_height, 'Infinite scrolling does not reproduce'
+            assert current_scrolling_height != new_scrolling_height, 'Infinite scrolling did not reproduce'
 
 
 class Inputs(BasePage):
@@ -361,7 +364,7 @@ class JQueryUI(BasePage):
         back_to_jquery = self.element_is_present(self.locators.BACK_TO_JQUERY_UI)
         self.js_script_click(back_to_jquery)
         new_url = self.driver.current_url
-        assert current_url != new_url, 'Button link does not refer to http://the-internet.herokuapp.com/jqueryui'
+        assert current_url != new_url, 'Button link did not refer to http://the-internet.herokuapp.com/jqueryui'
 
     def check_downloads_menu(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
@@ -385,7 +388,7 @@ class JQueryUI(BasePage):
                 fileends = "crdownload"
             else:
                 fileends = "none"
-        assert '.pdf' in self.latest_download_file(), 'PDF file does not download'
+        assert '.pdf' in self.latest_download_file(), 'PDF file was not downloaded'
 
     def check_downloads_csv(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
@@ -402,7 +405,7 @@ class JQueryUI(BasePage):
                 fileends = "crdownload"
             else:
                 fileends = "none"
-        assert '.csv' in self.latest_download_file(), 'CSV file does not download'
+        assert '.csv' in self.latest_download_file(), 'CSV file was not downloaded'
 
     def check_downloads_xls(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
@@ -419,4 +422,119 @@ class JQueryUI(BasePage):
                 fileends = "crdownload"
             else:
                 fileends = "none"
-        assert '.xls' in self.latest_download_file(), 'XLS file does not download'
+        assert '.xls' in self.latest_download_file(), 'XLS file was not downloaded'
+
+    def check_disabled_menu(self):
+        disabled_menu = self.element_is_present(self.locators.JQ_DISABLED)
+        self.js_script_click(disabled_menu)
+        assert disabled_menu.is_enabled(), 'Disabled menu is enabled'
+
+
+class JSAlerts(BasePage):
+    locators = PageLocators()
+
+    def check_js_alert_click(self):
+        self.element_is_present(self.locators.JS_ALERT).click()
+        alert_window = self.driver.switch_to.alert
+        alert_window.accept()
+        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        return alert_text
+
+    def check_js_confirm_accept(self):
+        self.element_is_present(self.locators.JS_CONFIRM).click()
+        alert_window = self.driver.switch_to.alert
+        alert_window.accept()
+        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        return alert_text
+
+    def check_js_confirm_dismiss(self):
+        self.element_is_present(self.locators.JS_CONFIRM).click()
+        alert_window = self.driver.switch_to.alert
+        alert_window.dismiss()
+        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        return alert_text
+
+    def check_js_prompt_click_accept(self):
+        text = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+        self.element_is_present(self.locators.JS_PROMPT).click()
+        prompt = self.driver.switch_to.alert
+        prompt.send_keys(text)
+        prompt.accept()
+        text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
+        return text, text_prompt
+
+    def check_js_prompt_click_dismiss(self):
+        self.element_is_present(self.locators.JS_PROMPT).click()
+        prompt = self.driver.switch_to.alert
+        prompt.dismiss()
+        text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
+        return text_prompt
+
+
+class KeyPresses(BasePage):
+    locators = PageLocators()
+
+    def check_key_presses(self):
+        self.action_key_down()
+        key_pressed = 'TAB'
+        key_press_result = self.element_is_present(self.locators.KEY_RESULT).text
+        assert key_pressed in key_press_result, 'Key was not pressed'
+
+
+class MultipleWindows(BasePage):
+    locators = PageLocators()
+
+    def check_multiple_windows(self):
+        initial_url = self.driver.current_url
+        self.element_is_present(self.locators.OPEN_NEW_WINDOW).click()
+        new_window = self.driver.window_handles[1]
+        self.driver.switch_to.window(new_window)
+        current_url = self.driver.current_url
+        assert initial_url != current_url, 'New window did not appear'
+
+
+class NotificationMessage(BasePage):
+    locators = PageLocators()
+
+    def check_notification_message(self):
+        self.element_is_present(self.locators.NEW_NOTIFY_MSG).click()
+        new_notification_msg = self.element_is_present(self.locators.NOTIFICATION_MSG)
+        assert new_notification_msg.is_displayed(), 'Notification Message did not appear'
+
+
+class StatusCodes(BasePage):
+    locators = PageLocators()
+
+    def check_200_status_code(self):
+        page_200 = self.element_is_present(self.locators.PAGE_200)
+        page_200.click()
+        response = requests.get(self.driver.current_url)
+        assert response.status_code == 200, 'Expected 200, got different status code'
+
+    def check_301_status_code(self):
+        page_301 = self.element_is_present(self.locators.PAGE_301)
+        page_301.click()
+        response = requests.get(self.driver.current_url)
+        assert response.status_code == 301, 'Expected 301, got different status code'
+
+    def check_404_status_code(self):
+        page_404 = self.element_is_present(self.locators.PAGE_404)
+        page_404.click()
+        response = requests.get(self.driver.current_url)
+        assert response.status_code == 404, 'Expected 404, got different status code'
+
+    def check_500_status_code(self):
+        page_500 = self.element_is_present(self.locators.PAGE_500)
+        page_500.click()
+        response = requests.get(self.driver.current_url)
+        assert response.status_code == 500, 'Expected 500, got different status code'
+
+
+class Typos(BasePage):
+    locators = PageLocators()
+
+    def check_typos_finding(self):
+        initial_text = self.element_is_present(self.locators.TYPOS_TEXT).text
+        self.driver.refresh()
+        loaded_text = self.element_is_present(self.locators.TYPOS_TEXT).text
+        assert initial_text != loaded_text, 'Both texts are the same'
