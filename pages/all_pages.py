@@ -7,7 +7,7 @@ import requests
 from selenium.common import UnexpectedAlertPresentException
 from selenium.webdriver import Keys
 
-from locators import PageLocators
+from src.locators import PageLocators
 from pages.base_page import BasePage
 
 
@@ -203,7 +203,7 @@ class FileUploader(BasePage):
 
     def check_file_uploading(self):
         self.element_is_present(self.locators.CHOSE_FILE_BUTTON).send_keys('/Users/anton/PycharmProjects/Test-The'
-                                                                           '-Internet-Herokuapp/test_file.txt')
+                                                                           '-Internet-Herokuapp/src/test_file.txt')
         self.element_is_present(self.locators.UPLOAD_BUTTON).click()
         upload_msg = self.element_is_present(self.locators.UPLOADED_MSG).text
         return upload_msg
