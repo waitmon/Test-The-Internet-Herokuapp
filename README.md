@@ -5,6 +5,8 @@ UI tests for http://the-internet.herokuapp.com/
 
 This repository contains sets of UI tests of the most common web elements. All tests were designed with a usage of Page Object Model pattern and Selenium Webdriver.
 
+Test documentation for manual testing (test cases, check-lists, bug-reports) can be found in test_documentation.xlsx file 
+
 ## Set-up
 1) Install all requirements: 
  ```
