@@ -9,27 +9,33 @@ from selenium.webdriver import Keys
 
 from src.locators import PageLocators
 from pages.base_page import BasePage
+import allure
 
 
 class AddRemoveElements(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check if element has been added')
     def check_add_element(self):
-        self.element_is_present(self.locators.ADD_ELEMENT).click()
-        added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
-        added_element_option = added_element.get_attribute('class')
+        with allure.step('clicking remove button'):
+            self.element_is_present(self.locators.ADD_ELEMENT).click()
+            added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
+            added_element_option = added_element.get_attribute('class')
         assert 'added-manually' in added_element_option, 'Element was not added'
 
+    @allure.step('Check if element has been deleted')
     def check_remove_element(self):
-        self.element_is_present(self.locators.ADD_ELEMENT).click()
-        added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
-        added_element.click()
+        with allure.step('clicking add and delete buttons'):
+            self.element_is_present(self.locators.ADD_ELEMENT).click()
+            added_element = self.element_is_present(self.locators.DELETE_ELEMENT)
+            added_element.click()
         assert self.element_is_not_visible(added_element), 'Element was not deleted'
 
 
 class BasicAuth(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check if credentials sent are correct')
     def check_success_authorization(self):
         auth_message = self.element_is_present(self.locators.SUCCESSFUL_AUTH).text
         return auth_message
@@ -38,50 +44,62 @@ class BasicAuth(BasePage):
 class BrokenImages(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check if both images are not displayed')
     def check_broken_images(self):
-        images_list = self.elements_are_present(self.locators.IMAGES_LIST)
-        images_status = []
-        for image in images_list:
-            image_status = image.get_attribute('naturalWidth')
-            images_status.append(image_status)
-            assert '0' in images_status, 'Broken images displayed'
+        with allure.step('Locating both broken images on the page'):
+            images_list = self.elements_are_present(self.locators.IMAGES_LIST)
+            images_status = []
+            with allure.step('Looping through the images attributes, searching for 0 width values'):
+                for image in images_list:
+                    image_status = image.get_attribute('naturalWidth')
+                    images_status.append(image_status)
+                    assert '0' in images_status, 'Broken images displayed'
 
+    @allure.step('Check if image is displayed')
     def check_correct_image(self):
         image = self.element_is_present(self.locators.VALID_IMAGE)
-        image_status = image.get_attribute('naturalWidth')
+        with allure.step('Getting image attribute, searching for non null width values'):
+            image_status = image.get_attribute('naturalWidth')
         assert image_status != 0, 'Correct image did not display'
 
 
 class Checkboxes(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check if checkboxes are available for being checked')
     def check_checked_checkboxes(self):
-        checkboxes = [self.locators.CHECKBOX_LIST]
-        self.element_is_present(random.choice(checkboxes)).click()
-        selected_checkboxes = []
-        checkboxes_selected = self.elements_are_present(self.locators.CHECKED_STATUS)
-        for checkbox in checkboxes_selected:
-            checkbox_checked = checkbox.get_attribute('value')
-            selected_checkboxes.append(checkbox_checked)
+        with allure.step('Locating elements on the page, randomly clicking one of them'):
+            checkboxes = [self.locators.CHECKBOX_LIST]
+            self.element_is_present(random.choice(checkboxes)).click()
+            with allure.step('Looping through attributes after clicking, searching for values refers to checked '
+                             'statement'):
+                selected_checkboxes = []
+                checkboxes_selected = self.elements_are_present(self.locators.CHECKED_STATUS)
+                for checkbox in checkboxes_selected:
+                    checkbox_checked = checkbox.get_attribute('value')
+                    selected_checkboxes.append(checkbox_checked)
         assert 'on' in selected_checkboxes, 'Checkboxes were not selected'
 
 
 class ContextMenu(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check the appearance of js alert')
     def check_right_click(self):
-        self.action_right_click(self.element_is_present(self.locators.CONTEXT_MENU))
-        try:
-            alert_window = self.driver.switch_to.alert
-            return alert_window.text
-        except UnexpectedAlertPresentException:
-            alert_window = self.driver.switch_to.alert
-            return alert_window.text
+        with allure.step('Performing right clicking, extracting alert message'):
+            self.action_right_click(self.element_is_present(self.locators.CONTEXT_MENU))
+            try:
+                alert_window = self.driver.switch_to.alert
+                return alert_window.text
+            except UnexpectedAlertPresentException:
+                alert_window = self.driver.switch_to.alert
+                return alert_window.text
 
 
 class DisappearingElements(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check elements visibility after each page reloading')
     def check_element_visibility(self):
         elements_qty_before_refreshing = self.elements_are_present(self.locators.ELEMENTS)
         self.driver.refresh()
@@ -100,6 +118,7 @@ class DragAndDrop(BasePage):
         after_position = drag_element.get_attribute('style')
         return before_position, after_position
 
+    @allure.step('Performing moving of Column A with an usage of drag and drop action')
     def check_drag_box_moving(self):
         drag_box = self.element_is_visible(self.locators.COLUMN_A)
         before_position, after_position = self.get_before_and_after_position(drag_box)
@@ -109,11 +128,13 @@ class DragAndDrop(BasePage):
 class DropdownList(BasePage):
     locators = PageLocators()
 
+    @allure.step('Selecting option 1')
     def check_first_option_selected(self):
         option = self.element_is_present(self.locators.OPTION_1)
         option.click()
         assert option.is_selected(), 'First option was not selected'
 
+    @allure.step('Selecting option 2')
     def check_second_option_selected(self):
         option = self.element_is_present(self.locators.OPTION_2)
         option.click()
@@ -123,12 +144,14 @@ class DropdownList(BasePage):
 class DynamicContent(BasePage):
     locators = PageLocators()
 
+    @allure.step('Refreshing page / checking text contents both before and after refreshing')
     def check_content_changing(self):
         content_before_refreshing = self.elements_are_present(self.locators.PAGE_CONTENT)
         self.driver.refresh()
         content_after_refreshing = self.elements_are_present(self.locators.PAGE_CONTENT)
         assert content_before_refreshing != content_after_refreshing, 'Content did not change after page reloading'
 
+    @allure.step('Pressing static button / checking that text contents are being static after page refreshing')
     def check_static_content(self):
         self.element_is_present(self.locators.STATIC_BUTTON).click()
         content_before_refreshing = [self.element_is_present(self.locators.COLUMN_1),
@@ -142,12 +165,14 @@ class DynamicContent(BasePage):
 class DynamicControls(BasePage):
     locators = PageLocators()
 
+    @allure.step('Clicking Remove button / verifying checkbox is not visible')
     def check_checkbox_remove(self):
         checkbox = self.element_is_present(self.locators.CHECKBOX_LIST)
         self.element_is_present(self.locators.ACTION_BUTTON).click()
         button_msg = self.element_is_present(self.locators.BUTTON_MESSAGE).text
         assert self.element_is_not_visible(checkbox) and button_msg == "It's gone!", 'Checkbox was not remove'
 
+    @allure.step('Clicking add button / verifying checkbox is visible again')
     def check_checkbox_appear(self):
         checkbox = self.element_is_present(self.locators.CHECKBOX_LIST)
         self.element_is_present(self.locators.ACTION_BUTTON).click()
@@ -157,6 +182,7 @@ class DynamicControls(BasePage):
         button_msg = self.element_is_visible(self.locators.BUTTON_MESSAGE).text
         assert checkbox_appear.is_displayed() and button_msg == "It's back!", 'Checkbox did not display'
 
+    @allure.step('Clicking enable button / Verifying input field is enabled')
     def check_enable_input(self):
         self.element_is_present(self.locators.ENABLE_DISABLE).click()
         input_field = self.element_is_clickable(self.locators.INPUT_FIELD)
@@ -164,6 +190,7 @@ class DynamicControls(BasePage):
         input_field.send_keys('test')
         assert input_field.is_enabled(), 'Input field is disabled'
 
+    @allure.step('Clicking disable button / Verifying input field is disabled')
     def check_disable_input(self):
         input_field = self.element_is_present(self.locators.INPUT_FIELD)
         assert input_field.get_attribute('disabled'), 'Input field is enabled'
@@ -172,6 +199,7 @@ class DynamicControls(BasePage):
 class DynamicLoading(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check that element is rendered after pressing start button')
     def check_element_is_rendered_after_click(self):
         self.element_is_present(self.locators.START_BUTTON).click()
         hidden_element = self.element_is_visible(self.locators.HIDDEN_TEXT)
@@ -181,6 +209,7 @@ class DynamicLoading(BasePage):
 class EntryAd(BasePage):
     locators = PageLocators()
 
+    @allure.step('Checking that modal window appears on a page load')
     def check_entry_ad_content(self):
         modal_title = self.element_is_visible(self.locators.MODAL_TITLE).text
         modal_content = self.element_is_visible(self.locators.MODAL_CONTENT).text
@@ -190,17 +219,21 @@ class EntryAd(BasePage):
 class ExitIntent(BasePage):
     locators = PageLocators()
 
+    @allure.step('Check that modal window is appearing after mouse moving out of the view pane')
     def check_modal_appear(self):
         time.sleep(5)
-        self.action_mouse_out_of_the_viewport()
-        pyautogui.moveTo(1000, 200)
-        modal_window = self.element_is_present(self.locators.MODAL_WINDOW)
+        with allure.step('Imitating mouse moving / moving mouse out of the user view pane'):
+            self.action_mouse_out_of_the_viewport()
+            pyautogui.moveTo(1000, 200)
+        with allure.step('Waiting for modal window to appear'):
+            modal_window = self.element_is_present(self.locators.MODAL_WINDOW)
         assert modal_window.is_displayed(), 'Modal window did not appear'
 
 
 class FileUploader(BasePage):
     locators = PageLocators()
 
+    @allure.step('Uploading file with upload button')
     def check_file_uploading(self):
         self.element_is_present(self.locators.CHOSE_FILE_BUTTON).send_keys('/Users/anton/PycharmProjects/Test-The'
                                                                            '-Internet-Herokuapp/src/test_file.txt')
@@ -212,6 +245,7 @@ class FileUploader(BasePage):
 class FloatingMenu(BasePage):
     locators = PageLocators()
 
+    @allure.title('Performing scrolling / verifying floating menu is visible all the time')
     def check_floating_menu_presence(self):
         floating_menu = self.element_is_present(self.locators.FLOATING_MENU)
         random_destination = str(random.randint(0, 999))
@@ -222,6 +256,7 @@ class FloatingMenu(BasePage):
 class FormAuthentication(BasePage):
     locators = PageLocators()
 
+    @allure.step('Submitting valid credentials')
     def check_success_auth(self):
         username = 'tomsmith'
         password = 'SuperSecretPassword!'
@@ -231,6 +266,7 @@ class FormAuthentication(BasePage):
         login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
         return login_msg
 
+    @allure.step('Submitting invalid username')
     def check_invalid_username_auth(self):
         username = 'johnsmith'
         password = 'SuperSecretPassword!'
@@ -240,6 +276,7 @@ class FormAuthentication(BasePage):
         login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
         return login_msg
 
+    @allure.step('Submitting invalid password')
     def check_invalid_password_auth(self):
         username = 'tomsmith'
         password = '1234qw!'
@@ -249,6 +286,7 @@ class FormAuthentication(BasePage):
         login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
         return login_msg
 
+    @allure.step('Submitting empty login form')
     def check_empty_login_auth(self):
         self.element_is_present(self.locators.LOGIN_BUTTON).click()
         login_msg = self.element_is_present(self.locators.LOGIN_MSG).text
@@ -259,39 +297,52 @@ class Frames(BasePage):
     locators = PageLocators()
 
     def check_nested_frames_content(self):
-        frame_top = self.element_is_present(self.locators.FRAME_TOP)
-        self.driver.switch_to.frame(frame_top)
-        left_frame = self.element_is_present(self.locators.LEFT_FRAME)
-        self.driver.switch_to.frame(left_frame)
-        left_text = self.element_is_present(self.locators.FRAME_TEXT).text
-        self.driver.switch_to.default_content()
-        self.driver.switch_to.frame(frame_top)
-        middle_frame = self.element_is_present(self.locators.MIDDLE_FRAME)
-        self.driver.switch_to.frame(middle_frame)
-        middle_text = self.element_is_present(self.locators.FRAME_TEXT).text
-        self.driver.switch_to.default_content()
-        self.driver.switch_to.frame(frame_top)
-        right_frame = self.element_is_present(self.locators.RIGHT_FRAME)
-        self.driver.switch_to.frame(right_frame)
-        right_text = self.element_is_present(self.locators.FRAME_TEXT).text
-        self.driver.switch_to.default_content()
-        frame_bottom = self.element_is_present(self.locators.BOTTOM_FRAME)
-        self.driver.switch_to.frame(frame_bottom)
-        bottom_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        with allure.step('Locating & switching to Top Frame'):
+            frame_top = self.element_is_present(self.locators.FRAME_TOP)
+            self.driver.switch_to.frame(frame_top)
+        with allure.step('Locating & switching to Left Frame / extracting frame text'):
+            left_frame = self.element_is_present(self.locators.LEFT_FRAME)
+            self.driver.switch_to.frame(left_frame)
+            left_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        with allure.step('Switching to default content'):
+            self.driver.switch_to.default_content()
+        with allure.step('Switching to Top Frame'):
+            self.driver.switch_to.frame(frame_top)
+        with allure.step('Locating & switching to Middle Frame / extracting frame text'):
+            middle_frame = self.element_is_present(self.locators.MIDDLE_FRAME)
+            self.driver.switch_to.frame(middle_frame)
+            middle_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        with allure.step('Switching to default content'):
+            self.driver.switch_to.default_content()
+        with allure.step('Switching to Top Frame'):
+            self.driver.switch_to.frame(frame_top)
+        with allure.step('Locating & switching to Right Frame / extracting frame text'):
+            right_frame = self.element_is_present(self.locators.RIGHT_FRAME)
+            self.driver.switch_to.frame(right_frame)
+            right_text = self.element_is_present(self.locators.FRAME_TEXT).text
+        with allure.step('Switching to default content'):
+            self.driver.switch_to.default_content()
+        with allure.step('Locating & switching to Bottom Frame / extracting frame text'):
+            frame_bottom = self.element_is_present(self.locators.BOTTOM_FRAME)
+            self.driver.switch_to.frame(frame_bottom)
+            bottom_text = self.element_is_present(self.locators.FRAME_TEXT).text
         return left_text, middle_text, right_text, bottom_text
 
     def check_iframe_interaction(self):
-        iframe = self.element_is_present(self.locators.IFRAME)
-        self.driver.switch_to.frame(iframe)
-        iframe_text_field = self.element_is_present(self.locators.IFRAME_INPUT_TEXT)
-        iframe_text_field.click()
-        iframe_text_field.send_keys('Mine too')
+        with allure.step('Iframe locating & switching'):
+            iframe = self.element_is_present(self.locators.IFRAME)
+            self.driver.switch_to.frame(iframe)
+        with allure.step('Interaction with TinyMCE WYSIWYG Editor after switching to Iframe'):
+            iframe_text_field = self.element_is_present(self.locators.IFRAME_INPUT_TEXT)
+            iframe_text_field.click()
+            iframe_text_field.send_keys(' Mine too')
         assert iframe_text_field.is_displayed(), 'Driver could not switch to iframe'
 
 
 class HorizontalSlider(BasePage):
     locators = PageLocators()
 
+    @allure.step('Clicking slider and moving by mouse')
     def check_slider_moving_by_mouse(self):
         range_value_before = self.element_is_visible(self.locators.SLIDER_FIELD).text
         slider = self.element_is_present(self.locators.SLIDER)
@@ -299,6 +350,7 @@ class HorizontalSlider(BasePage):
         range_value_after = self.element_is_visible(self.locators.SLIDER_FIELD).text
         return range_value_before, range_value_after
 
+    @allure.step('Moving slider by arrow keys')
     def check_slider_moving_by_arrow_keys(self):
         range_value_before = self.element_is_visible(self.locators.SLIDER_FIELD).text
         slider = self.element_is_present(self.locators.SLIDER)
@@ -312,6 +364,7 @@ class HorizontalSlider(BasePage):
 class Hovers(BasePage):
     locators = PageLocators()
 
+    @allure.step('Hovering over the images and checking if user info is appearing')
     def check_hovers(self):
         user = self.element_is_present(self.locators.USER)
         self.action_move_to_element(user)
@@ -320,6 +373,7 @@ class Hovers(BasePage):
 
 
 class InfiniteScroll(BasePage):
+    @allure.step('Performing infinite scrolling / verifying the process is running')
     def check_infinite_scroll(self):
         scroll_pause_time = 0.5
         current_scrolling_height = self.driver.execute_script("return document.body.scrollHeight")

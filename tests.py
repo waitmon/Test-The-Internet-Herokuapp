@@ -2,15 +2,18 @@ from pages.all_pages import AddRemoveElements, BasicAuth, BrokenImages, Checkbox
     DragAndDrop, DropdownList, DynamicContent, DynamicControls, DynamicLoading, EntryAd, ExitIntent, FileUploader, \
     FloatingMenu, FormAuthentication, Frames, HorizontalSlider, Hovers, InfiniteScroll, Inputs, JQueryUI, JSAlerts, \
     KeyPresses, MultipleWindows, NotificationMessage, StatusCodes, Typos
+import allure
 
 
+@allure.suite('Add/Remove Elements')
 class TestAddRemoveElements:
-
+    @allure.title('Add Elements')
     def test_add_elements(self, driver):
         page = AddRemoveElements(driver, 'https://the-internet.herokuapp.com/add_remove_elements/')
         page.open()
         page.check_add_element()
 
+    @allure.title('Remove Elements')
     def test_remove_elements(self, driver):
         page = AddRemoveElements(driver, 'https://the-internet.herokuapp.com/add_remove_elements/')
         page.open()
@@ -18,7 +21,7 @@ class TestAddRemoveElements:
 
 
 class TestBasicAuth:
-
+    @allure.title('Basic Auth')
     def test_auth_success(self, driver):
         page = BasicAuth(driver, 'https://admin:admin@the-internet.herokuapp.com/basic_auth/')
         page.open()
@@ -26,18 +29,23 @@ class TestBasicAuth:
         assert auth_msg == 'Congratulations! You must have the proper credentials.', 'Incorrect login'
 
 
+@allure.suite('Broken/Displayed Images')
 class TestBrokenImages:
-
+    @allure.title('Broken Images')
     def test_broken_images(self, driver):
         page = BrokenImages(driver, 'http://the-internet.herokuapp.com/broken_images')
         page.open()
         page.check_broken_images()
 
+    @allure.title('Displayed Images')
     def test_correct_image(self, driver):
         page = BrokenImages(driver, 'http://the-internet.herokuapp.com/broken_images')
         page.open()
         page.check_correct_image()
 
+
+class TestCheckboxes:
+    @allure.title('Checkboxes interaction')
     def test_checkbox_checked(self, driver):
         page = Checkboxes(driver, 'http://the-internet.herokuapp.com/checkboxes')
         page.open()
@@ -45,7 +53,7 @@ class TestBrokenImages:
 
 
 class TestContextMenu:
-
+    @allure.title('Context Menu')
     def test_right_click_context_menu(self, driver):
         page = ContextMenu(driver, 'http://the-internet.herokuapp.com/context_menu')
         page.open()
@@ -54,7 +62,7 @@ class TestContextMenu:
 
 
 class TestDisappearingElements:
-
+    @allure.title('Disappearing Elements')
     def test_visibility_elements(self, driver):
         page = DisappearingElements(driver, 'http://the-internet.herokuapp.com/disappearing_elements')
         page.open()
@@ -62,15 +70,15 @@ class TestDisappearingElements:
 
 
 class TestDragAndDrop:
-
+    @allure.title('Drag and Drop')
     def test_drag_box_moving(self, driver):
         page = DragAndDrop(driver, 'http://the-internet.herokuapp.com/drag_and_drop')
         page.open()
         page.check_drag_box_moving()
 
 
+@allure.suite('Dropdown list interaction')
 class TestDropdownList:
-
     def test_select_option_1(self, driver):
         page = DropdownList(driver, 'http://the-internet.herokuapp.com/dropdown')
         page.open()
@@ -82,36 +90,42 @@ class TestDropdownList:
         page.check_second_option_selected()
 
 
+@allure.suite('Dynamic Content interaction')
 class TestDynamicContent:
-
+    @allure.title('Check changing content')
     def test_content_changing(self, driver):
         page = DynamicContent(driver, 'http://the-internet.herokuapp.com/dynamic_content')
         page.open()
         page.check_content_changing()
 
+    @allure.title('Check static content')
     def test_static_content(self, driver):
         page = DynamicContent(driver, 'http://the-internet.herokuapp.com/dynamic_content')
         page.open()
         page.check_static_content()
 
 
+@allure.suite('Dynamic Controls')
 class TestDynamicControls:
-
+    @allure.title('Check checkbox removing')
     def test_checkbox_remove(self, driver):
         page = DynamicControls(driver, 'http://the-internet.herokuapp.com/dynamic_controls')
         page.open()
         page.check_checkbox_remove()
 
+    @allure.title('Check checkbox adding')
     def test_checkbox_add(self, driver):
         page = DynamicControls(driver, 'http://the-internet.herokuapp.com/dynamic_controls')
         page.open()
         page.check_checkbox_appear()
 
+    @allure.title('Check enable button')
     def test_enable_input(self, driver):
         page = DynamicControls(driver, 'http://the-internet.herokuapp.com/dynamic_controls')
         page.open()
         page.check_enable_input()
 
+    @allure.title('Check disable button')
     def test_disable_input(self, driver):
         page = DynamicControls(driver, 'http://the-internet.herokuapp.com/dynamic_controls')
         page.open()
@@ -119,7 +133,7 @@ class TestDynamicControls:
 
 
 class TestDynamicLoading:
-
+    @allure.title('Dynamically Loaded Page Elements')
     def test_element_is_rendered_after_click(self, driver):
         page = DynamicLoading(driver, 'http://the-internet.herokuapp.com/dynamic_loading/2')
         page.open()
@@ -127,7 +141,7 @@ class TestDynamicLoading:
 
 
 class TestEntryAd:
-
+    @allure.title('Entry Ad')
     def test_entry_ad_content(self, driver):
         page = EntryAd(driver, 'http://the-internet.herokuapp.com/entry_ad')
         page.open()
@@ -136,7 +150,7 @@ class TestEntryAd:
 
 
 class TestExitIntent:
-
+    @allure.title('Imitating mouse out of the viewport pane')
     def test_exit_intent(self, driver):
         page = ExitIntent(driver, 'http://the-internet.herokuapp.com/exit_intent')
         page.open()
@@ -144,7 +158,7 @@ class TestExitIntent:
 
 
 class TestFileUploader:
-
+    @allure.title('File Uploader')
     def test_file_uploading(self, driver):
         page = FileUploader(driver, 'http://the-internet.herokuapp.com/upload')
         page.open()
@@ -153,33 +167,37 @@ class TestFileUploader:
 
 
 class TestFloatingMenu:
-
+    @allure.title('Floating Menu')
     def test_floating_menu_presence(self, driver):
         page = FloatingMenu(driver, 'http://the-internet.herokuapp.com/floating_menu')
         page.open()
         page.check_floating_menu_presence()
 
 
+@allure.suite('Form Authentication')
 class TestFormAuthentication:
-
+    @allure.title('Check login with correct credentials')
     def test_success_auth(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_success_auth()
         assert 'You logged into a secure area!' in login_result, 'Invalid Login warning appeared'
 
+    @allure.title('Check login with incorrect credentials / invalid username')
     def test_invalid_username_auth(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_invalid_username_auth()
         assert 'Your username is invalid!' in login_result, 'Successful login message appeared'
 
+    @allure.title('Check login with incorrect credentials / invalid password')
     def test_invalid_password_auth(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
         login_result = page.check_invalid_password_auth()
         assert 'Your password is invalid!' in login_result, 'Successful login message appeared'
 
+    @allure.title('Check login with incorrect credentials / empty for submitting')
     def test_empty_login(self, driver):
         page = FormAuthentication(driver, 'http://the-internet.herokuapp.com/login')
         page.open()
@@ -187,8 +205,9 @@ class TestFormAuthentication:
         assert 'Your username is invalid!' in login_result, 'Successful login message appeared'
 
 
+@allure.suite('Frames interaction (Nested / Iframes)')
 class TestFrames:
-
+    @allure.title('Checking content and switching between frames')
     def test_nested_frames_content(self, driver):
         page = Frames(driver, 'http://the-internet.herokuapp.com/nested_frames')
         page.open()
@@ -198,20 +217,23 @@ class TestFrames:
         assert right_text == 'RIGHT', 'Nested frame does not exist'
         assert bottom_text == 'BOTTOM', 'Nested frame does not exist'
 
+    @allure.title('Checking interaction with iFrame')
     def test_iframe_interaction(self, driver):
         page = Frames(driver, 'http://the-internet.herokuapp.com/iframe')
         page.open()
         page.check_iframe_interaction()
 
 
+@allure.suite('Horizontal Slider')
 class TestHorizontalSlider:
-
+    @allure.title('Moving slider by mouse')
     def test_slider_moving(self, driver):
         page = HorizontalSlider(driver, 'http://the-internet.herokuapp.com/horizontal_slider')
         page.open()
         before, after = page.check_slider_moving_by_mouse()
         assert before != after, 'The slider range value did not change'
 
+    @allure.title('Moving slider by key arrows')
     def test_slider_moving_arrows(self, driver):
         page = HorizontalSlider(driver, 'http://the-internet.herokuapp.com/horizontal_slider')
         page.open()
@@ -220,7 +242,7 @@ class TestHorizontalSlider:
 
 
 class TestHovers:
-
+    @allure.title('Hovers')
     def test_hovers(self, driver):
         page = Hovers(driver, 'http://the-internet.herokuapp.com/hovers')
         page.open()
@@ -228,7 +250,7 @@ class TestHovers:
 
 
 class TestInfiniteScroll:
-
+    @allure.title('Infinite Scroll')
     def test_infinite_scroll(self, driver):
         page = InfiniteScroll(driver, 'http://the-internet.herokuapp.com/infinite_scroll')
         page.open()
