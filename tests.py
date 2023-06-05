@@ -257,83 +257,98 @@ class TestInfiniteScroll:
         page.check_infinite_scroll()
 
 
+@allure.suite('Inputs')
 class TestInputs:
 
+    @allure.title('Input numbers')
     def test_input_numbers(self, driver):
         page = Inputs(driver, 'http://the-internet.herokuapp.com/inputs')
         page.open()
         page.check_input_numbers()
 
-    def test_input_non_digit_char(self, driver):
+    @allure.title('Input non-numeric characters')
+    def test_input_non_numeric_chars(self, driver):
         page = Inputs(driver, 'http://the-internet.herokuapp.com/inputs')
         page.open()
-        page.check_non_digit_char()
+        page.check_non_numeric_chars()
 
 
+@allure.suite('JQueryUI - Menus')
 class TestJQueryUI:
-
+    @allure.title('Checking that "enabled" menu is enabled')
     def test_enabled_menu(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_enabled_menu()
 
+    @allure.title('Checking that "Back to JQuery UI" button menu is enabled')
     def test_back_to_jquery_menu(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_back_to_jquery_menu()
 
+    @allure.title('Checking that "Downloads" button is enabled')
     def test_downloads_menu(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_downloads_menu()
 
+    @allure.title('Performing PDF downloading')
     def test_downloads_pdf(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_downloads_pdf()
 
+    @allure.title('Performing CSV downloading')
     def test_downloads_csv(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_downloads_csv()
 
-    def test_downloads_xsl(self, driver):
+    @allure.title('Performing XLS downloading')
+    def test_downloads_xls(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_downloads_xls()
 
+    @allure.title('Checking that "disabled" menu is disabled')
     def test_disabled_menu(self, driver):
         page = JQueryUI(driver, 'http://the-internet.herokuapp.com/jqueryui/menu')
         page.open()
         page.check_disabled_menu()
 
 
+@allure.suite('JavaScript Alerts')
 class TestJSAlerts:
-
+    @allure.title('Clicking for JS Alert')
     def test_js_alert_click(self, driver):
         page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
         page.open()
         alert_msg = page.check_js_alert_click()
         assert alert_msg == 'You successfully clicked an alert', 'Alert window did not appear'
 
+    @allure.title('Clicking for JS Confirm / Accept option')
     def test_js_confirm_accept_click(self, driver):
         page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
         page.open()
         alert_msg = page.check_js_confirm_accept()
         assert alert_msg == 'You clicked: Ok', 'Alert window did not appear'
 
+    @allure.title('Clicking for JS Confirm / Dismiss option')
     def test_js_confirm_dismiss_click(self, driver):
         page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
         page.open()
         alert_msg = page.check_js_confirm_dismiss()
         assert alert_msg == 'You clicked: Cancel', 'Alert window did not appear'
 
+    @allure.title('Clicking for JS Prompt / Accept option')
     def test_js_prompt_accept_click(self, driver):
         page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
         page.open()
         text, prompt_text = page.check_js_prompt_click_accept()
         assert text in prompt_text, 'Alert window did not appear'
 
+    @allure.title('Clicking for JS Prompt / Dismiss option')
     def test_js_prompt_accept_dismiss(self, driver):
         page = JSAlerts(driver, 'http://the-internet.herokuapp.com/javascript_alerts')
         page.open()
@@ -342,7 +357,7 @@ class TestJSAlerts:
 
 
 class TestKeyPresses:
-
+    @allure.title('Key Presses')
     def test_key_presses(self, driver):
         page = KeyPresses(driver, 'http://the-internet.herokuapp.com/key_presses')
         page.open()
@@ -350,7 +365,7 @@ class TestKeyPresses:
 
 
 class TestMultipleWindows:
-
+    @allure.title('Multiple Windows')
     def test_multiple_windows(self, driver):
         page = MultipleWindows(driver, 'http://the-internet.herokuapp.com/windows')
         page.open()
@@ -358,30 +373,34 @@ class TestMultipleWindows:
 
 
 class TestNotificationMessage:
-
+    @allure.title('Notification Messages')
     def test_notification_message(self, driver):
         page = NotificationMessage(driver, 'http://the-internet.herokuapp.com/notification_message_rendered')
         page.open()
         page.check_notification_message()
 
 
+@allure.suite('Status Codes')
 class TestStatusCodes:
-
+    @allure.title('Checking 200 HTTP status code')
     def test_200_status_code(self, driver):
         page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
         page.open()
         page.check_200_status_code()
 
+    @allure.title('Checking 301 HTTP status code')
     def test_301_status_code(self, driver):
         page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
         page.open()
         page.check_301_status_code()
 
+    @allure.title('Checking 404 HTTP status code')
     def test_404_status_code(self, driver):
         page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
         page.open()
         page.check_404_status_code()
 
+    @allure.title('Checking 500 HTTP status code')
     def test_500_status_code(self, driver):
         page = StatusCodes(driver, 'https://the-internet.herokuapp.com/status_codes')
         page.open()
@@ -389,7 +408,7 @@ class TestStatusCodes:
 
 
 class TestTypos:
-
+    @allure.title('Checking Typos in the content')
     def test_typos_finding(self, driver):
         page = Typos(driver, 'https://the-internet.herokuapp.com/typos')
         page.open()

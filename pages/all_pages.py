@@ -389,6 +389,7 @@ class InfiniteScroll(BasePage):
 class Inputs(BasePage):
     locators = PageLocators()
 
+    @allure.step('Input random number value')
     def check_input_numbers(self):
         input_field = self.element_is_present(self.locators.NUMBER_INPUT_FIELD)
         input_field.click()
@@ -396,38 +397,50 @@ class Inputs(BasePage):
         input_opt = input_field.get_attribute('value')
         assert input_opt.isdigit(), 'Impossible to input digital characters'
 
-    def check_non_digit_char(self):
+    @allure.step('Input text value')
+    def check_non_numeric_chars(self):
         input_field = self.element_is_present(self.locators.NUMBER_INPUT_FIELD)
         input_field.click()
         input_field.send_keys('ui')
         input_opt = input_field.get_attribute('value')
-        assert '' in input_opt, 'Non digital characters are possible for input'
+        assert '' in input_opt, 'Non-numeric characters are possible for input'
 
 
 class JQueryUI(BasePage):
     locators = PageLocators()
 
     def check_enabled_menu(self):
-        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
-        self.js_script_click(enabled_menu)
-        assert enabled_menu.is_enabled() and enabled_menu.is_displayed(), 'Enabled menu is not clickable'
+        with allure.step('Locating enabled menu'):
+            enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        with allure.step('Performing JS click on the menu button'):
+            self.js_script_click(enabled_menu)
+        with allure.step('Asserting that menu is enabled and displayed'):
+            assert enabled_menu.is_enabled() and enabled_menu.is_displayed(), 'Enabled menu is not clickable'
 
     def check_back_to_jquery_menu(self):
-        current_url = self.driver.current_url
-        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
-        self.js_script_click(enabled_menu)
-        back_to_jquery = self.element_is_present(self.locators.BACK_TO_JQUERY_UI)
-        self.js_script_click(back_to_jquery)
-        new_url = self.driver.current_url
+        with allure.step('Locating current url and menu button'):
+            current_url = self.driver.current_url
+            enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        with allure.step('Performing JS click on the menu button'):
+            self.js_script_click(enabled_menu)
+        with allure.step('Clicking on the back button and locating new current url'):
+            back_to_jquery = self.element_is_present(self.locators.BACK_TO_JQUERY_UI)
+            self.js_script_click(back_to_jquery)
+            new_url = self.driver.current_url
         assert current_url != new_url, 'Button link did not refer to http://the-internet.herokuapp.com/jqueryui'
 
     def check_downloads_menu(self):
-        enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
-        self.js_script_click(enabled_menu)
-        downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
-        self.js_script_click(downloads_menu)
+        with allure.step('Locating enabled menu'):
+            enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
+        with allure.step('Performing JS click on the menu button'):
+            self.js_script_click(enabled_menu)
+        with allure.step('Locating downloads menu'):
+            downloads_menu = self.element_is_present(self.locators.JQ_DOWNLOADS)
+        with allure.step('Performing JS click on the menu button'):
+            self.js_script_click(downloads_menu)
         assert downloads_menu.is_enabled() and downloads_menu.is_displayed(), 'Downloads menu is not clickable'
 
+    @allure.step('Performing clicking on the PDF button / Checking that file has been downloaded ')
     def check_downloads_pdf(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
         self.js_script_click(enabled_menu)
@@ -445,6 +458,7 @@ class JQueryUI(BasePage):
                 fileends = "none"
         assert '.pdf' in self.latest_download_file(), 'PDF file was not downloaded'
 
+    @allure.step('Performing clicking on the CSV button / Checking that file has been downloaded ')
     def check_downloads_csv(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
         self.js_script_click(enabled_menu)
@@ -462,6 +476,7 @@ class JQueryUI(BasePage):
                 fileends = "none"
         assert '.csv' in self.latest_download_file(), 'CSV file was not downloaded'
 
+    @allure.step('Performing clicking on the Excel button / Checking that file has been downloaded ')
     def check_downloads_xls(self):
         enabled_menu = self.element_is_present(self.locators.JQ_ENABLED)
         self.js_script_click(enabled_menu)
@@ -479,6 +494,7 @@ class JQueryUI(BasePage):
                 fileends = "none"
         assert '.xls' in self.latest_download_file(), 'XLS file was not downloaded'
 
+    @allure.step('Checking that disabled menu is not clickable')
     def check_disabled_menu(self):
         disabled_menu = self.element_is_present(self.locators.JQ_DISABLED)
         self.js_script_click(disabled_menu)
@@ -489,46 +505,63 @@ class JSAlerts(BasePage):
     locators = PageLocators()
 
     def check_js_alert_click(self):
-        self.element_is_present(self.locators.JS_ALERT).click()
-        alert_window = self.driver.switch_to.alert
-        alert_window.accept()
-        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        with allure.step('Clicking on alert button'):
+            self.element_is_present(self.locators.JS_ALERT).click()
+        with allure.step('Switching & accepting alert window'):
+            alert_window = self.driver.switch_to.alert
+            alert_window.accept()
+        with allure.step('Extract text from "Result" field'):
+            alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
         return alert_text
 
     def check_js_confirm_accept(self):
-        self.element_is_present(self.locators.JS_CONFIRM).click()
-        alert_window = self.driver.switch_to.alert
-        alert_window.accept()
-        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        with allure.step('Clicking on alert button'):
+            self.element_is_present(self.locators.JS_CONFIRM).click()
+        with allure.step('Switching & accepting alert window'):
+            alert_window = self.driver.switch_to.alert
+            alert_window.accept()
+        with allure.step('Extract text from "Result" field'):
+            alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
         return alert_text
 
     def check_js_confirm_dismiss(self):
-        self.element_is_present(self.locators.JS_CONFIRM).click()
-        alert_window = self.driver.switch_to.alert
-        alert_window.dismiss()
-        alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
+        with allure.step('Clicking on alert button'):
+            self.element_is_present(self.locators.JS_CONFIRM).click()
+        with allure.step('Switching & dismissing alert window'):
+            alert_window = self.driver.switch_to.alert
+            alert_window.dismiss()
+        with allure.step('Extract text from "Result" field'):
+            alert_text = self.element_is_present(self.locators.ALERT_RESULT).text
         return alert_text
 
     def check_js_prompt_click_accept(self):
-        text = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
-        self.element_is_present(self.locators.JS_PROMPT).click()
-        prompt = self.driver.switch_to.alert
-        prompt.send_keys(text)
-        prompt.accept()
-        text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
+        with allure.step('Generating random text'):
+            text = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+        with allure.step('Clicking on alert button'):
+            self.element_is_present(self.locators.JS_PROMPT).click()
+        with allure.step('Switching & sending text to alert window'):
+            prompt = self.driver.switch_to.alert
+            prompt.send_keys(text)
+            prompt.accept()
+        with allure.step('Extract text from "Result" field'):
+            text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
         return text, text_prompt
 
     def check_js_prompt_click_dismiss(self):
-        self.element_is_present(self.locators.JS_PROMPT).click()
-        prompt = self.driver.switch_to.alert
-        prompt.dismiss()
-        text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
+        with allure.step('Clicking on alert button'):
+            self.element_is_present(self.locators.JS_PROMPT).click()
+        with allure.step('Switching & dismissing alert window'):
+            prompt = self.driver.switch_to.alert
+            prompt.dismiss()
+        with allure.step('Extract text from "Result" field'):
+            text_prompt = self.element_is_present(self.locators.ALERT_RESULT).text
         return text_prompt
 
 
 class KeyPresses(BasePage):
     locators = PageLocators()
 
+    @allure.step('Performing key pressing & asserting result in text field')
     def check_key_presses(self):
         self.action_key_down()
         key_pressed = 'TAB'
@@ -539,6 +572,7 @@ class KeyPresses(BasePage):
 class MultipleWindows(BasePage):
     locators = PageLocators()
 
+    @allure.step('Opening a new window / Comparing initial and following link')
     def check_multiple_windows(self):
         initial_url = self.driver.current_url
         self.element_is_present(self.locators.OPEN_NEW_WINDOW).click()
@@ -551,6 +585,7 @@ class MultipleWindows(BasePage):
 class NotificationMessage(BasePage):
     locators = PageLocators()
 
+    @allure.step('Checking that notification message is changing after pressing special button')
     def check_notification_message(self):
         self.element_is_present(self.locators.NEW_NOTIFY_MSG).click()
         new_notification_msg = self.element_is_present(self.locators.NOTIFICATION_MSG)
@@ -560,24 +595,28 @@ class NotificationMessage(BasePage):
 class StatusCodes(BasePage):
     locators = PageLocators()
 
+    @allure.step('Requesting status code / Verifying response is 200')
     def check_200_status_code(self):
         page_200 = self.element_is_present(self.locators.PAGE_200)
         page_200.click()
         response = requests.get(self.driver.current_url)
         assert response.status_code == 200, 'Expected 200, got different status code'
 
+    @allure.step('Requesting status code / Verifying response is 301')
     def check_301_status_code(self):
         page_301 = self.element_is_present(self.locators.PAGE_301)
         page_301.click()
         response = requests.get(self.driver.current_url)
         assert response.status_code == 301, 'Expected 301, got different status code'
 
+    @allure.step('Requesting status code / Verifying response is 404')
     def check_404_status_code(self):
         page_404 = self.element_is_present(self.locators.PAGE_404)
         page_404.click()
         response = requests.get(self.driver.current_url)
         assert response.status_code == 404, 'Expected 404, got different status code'
 
+    @allure.step('Requesting status code / Verifying response is 500')
     def check_500_status_code(self):
         page_500 = self.element_is_present(self.locators.PAGE_500)
         page_500.click()
@@ -588,6 +627,7 @@ class StatusCodes(BasePage):
 class Typos(BasePage):
     locators = PageLocators()
 
+    @allure.step('Checking that typo is being introduced on each page load')
     def check_typos_finding(self):
         initial_text = self.element_is_present(self.locators.TYPOS_TEXT).text
         self.driver.refresh()
