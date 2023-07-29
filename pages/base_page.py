@@ -91,7 +91,7 @@ class BasePage:
         newest = files[-1]
         return newest
 
-    def action_key_down(self):
+    def action_key_tab(self):
         action = ActionChains(self.driver)
         action.key_down(Keys.TAB)
         action.perform()

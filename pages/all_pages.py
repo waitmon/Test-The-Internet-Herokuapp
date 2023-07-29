@@ -563,7 +563,7 @@ class KeyPresses(BasePage):
 
     @allure.step('Performing key pressing & asserting result in text field')
     def check_key_presses(self):
-        self.action_key_down()
+        self.action_key_tab()
         key_pressed = 'TAB'
         key_press_result = self.element_is_present(self.locators.KEY_RESULT).text
         assert key_pressed in key_press_result, 'Key was not pressed'
