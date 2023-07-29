@@ -3,7 +3,7 @@ UI tests for http://the-internet.herokuapp.com/
 
 ## Introduction
 
-This repository contains sets of UI tests of the most common web elements and interaction scenarios (inputs, clicks, selections, hovers, sliders, pop-up alerts etc). All tests were designed with an usage of Page Object Model pattern.
+This repository contains sets of UI tests of the most common web elements and interaction scenarios (inputs, clicks, selections, hovers, sliders, pop-up alerts etc).
 
 Test documentation for manual testing (test cases, check-lists, bug-reports) can be found in test_documentation.xlsx file 
 
